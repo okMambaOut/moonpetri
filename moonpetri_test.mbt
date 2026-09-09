@@ -47,3 +47,12 @@ test "duplicate arcs merge" {
   expect_ok(n.add_input(p, t, 1))
   assert_true(enabled(n, n.initial_marking(), t))
 }
+
+///|
+test "disabled transition cannot fire" {
+  let n = PetriNet::new()
+  let p = expect_ok(n.add_place("p", 0))
+  let t = expect_ok(n.add_transition("t"))
+  expect_ok(n.add_input(p, t, 1))
+  assert_true(fire(n, n.initial_marking(), t) is Err(_))
+}
