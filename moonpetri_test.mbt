@@ -79,3 +79,11 @@ test "state cap result is deterministic" {
   let r = expect_ok(reachable(n, n.initial_marking(), 1))
   assert_false(r.truncated)
 }
+
+///|
+test "shortest trace starts empty" {
+  let n = PetriNet::new()
+  let _ = expect_ok(n.add_place("p", 0))
+  let r = expect_ok(reachable(n, n.initial_marking(), 4))
+  assert_eq(shortest_trace(r, n.initial_marking()).unwrap().length(), 0)
+}
