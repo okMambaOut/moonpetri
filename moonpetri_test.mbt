@@ -56,3 +56,15 @@ test "disabled transition cannot fire" {
   expect_ok(n.add_input(p, t, 1))
   assert_true(fire(n, n.initial_marking(), t) is Err(_))
 }
+
+///|
+test "sequence applies in order" {
+  let n = PetriNet::new()
+  let p = expect_ok(n.add_place("p", 1))
+  let q = expect_ok(n.add_place("q", 0))
+  let t = expect_ok(n.add_transition("move"))
+  expect_ok(n.add_input(p, t, 1))
+  expect_ok(n.add_output(t, q, 1))
+  let m = expect_ok(fire_sequence(n, n.initial_marking(), [t]))
+  assert_eq(m.tokens[q], 1)
+}
