@@ -1,6 +1,6 @@
 ///|
 fn main {
-  let args = @env.args()
+  let args = command_args()
   if args.length() < 3 {
     println("usage: moonpetri <validate|explore|fire|report> FILE [arguments]")
     @sys.exit(2)
@@ -26,4 +26,17 @@ fn main {
       @sys.exit(2)
     }
   }
+}
+
+///|
+#cfg(target="js")
+fn command_args() -> Array[String] {
+  // Node argv includes the interpreter before the generated program path.
+  @env.args()[1:].to_owned()
+}
+
+///|
+#cfg(not(target="js"))
+fn command_args() -> Array[String] {
+  @env.args()
 }
