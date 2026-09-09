@@ -44,6 +44,7 @@ pub struct PetriNet {
 pub struct ReachabilityResult {
   priv states : Array[Marking]
   priv predecessors : Array[(Int, Int)?]
+  priv deadlock_indices : Array[Int]
   edges : Int
   truncated : Bool
   max_tokens : Int
@@ -277,12 +278,17 @@ pub fn reachable(
   let seen : Map[String, Int] = Map([])
   seen[key(start)] = 0
   let mut head = 0
+  let deadlock_indices = []
   let mut edges = 0
   let mut trunc = false
   while head < states.length() {
     let i = head
     head = head + 1
-    for t in enabled_transitions(net, states[i]) {
+    let transitions = enabled_transitions(net, states[i])
+    if transitions.is_empty() {
+      deadlock_indices.push(i)
+    }
+    for t in transitions {
       if edges == 2147483647 {
         return Err(TokenOverflow)
       }
@@ -310,18 +316,19 @@ pub fn reachable(
       }
     }
   }
-  Ok({ states, predecessors, edges, truncated: trunc, max_tokens: mt })
+  Ok({
+    states,
+    predecessors,
+    deadlock_indices,
+    edges,
+    truncated: trunc,
+    max_tokens: mt,
+  })
 }
 
 ///|
-pub fn deadlocks(net : PetriNet, r : ReachabilityResult) -> Array[Marking] {
-  let out = []
-  for m in r.states {
-    if enabled_transitions(net, m).length() == 0 {
-      out.push(m)
-    }
-  }
-  out
+pub fn deadlocks(_net : PetriNet, r : ReachabilityResult) -> Array[Marking] {
+  r.deadlock_indices.map(fn(i) { marking(r.states[i].tokens) })
 }
 
 ///|
