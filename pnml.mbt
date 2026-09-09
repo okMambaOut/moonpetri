@@ -121,6 +121,7 @@ fn load_pnml(input : String) -> PetriNet raise XmlError {
         transitions[id] = pnml_result(
           net.add_transition(node.value("name", id)),
         )
+        net.pnml_transition_ids[id] = transitions[id]
       }
       "arc" => node.shape(["id", "source", "target"], ["inscription"])
       _ => raise XmlError("unsupported node")

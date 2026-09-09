@@ -32,7 +32,11 @@ pub fn run_command(
     "fire" => {
       let seq = []
       for name in args {
-        match net.find_transition(name) {
+        let found = match net.find_pnml_transition(name) {
+          Some(t) => Some(t)
+          None => net.find_transition(name)
+        }
+        match found {
           Some(t) => seq.push(t)
           None => return Err([ParseError("unknown transition: \{name}")])
         }
@@ -88,4 +92,18 @@ test "command engine validates options and emits stable structured output" {
   assert_true(run_command("report", input, ["--max-states", "0"]) is Err(_))
   assert_true(run_command("explore", input, ["--max-states", "-1"]) is Err(_))
   assert_true(run_command("validate", "<pnml>", []) is Err(_))
+}
+
+///|
+test "CLI resolves PNML transition IDs before human-readable labels" {
+  let input = "<pnml><net id='n'><place id='p'><initialMarking><text>1</text></initialMarking></place><transition id='t_consume'><name><text>消费</text></name></transition><arc id='a' source='p' target='t_consume'/></net></pnml>"
+  assert_eq(run_command("fire", input, ["t_consume"]), Ok("marking=[0]"))
+  assert_eq(run_command("fire", input, ["消费"]), Ok("marking=[0]"))
+  let n = match parse_pnml(input) {
+    Ok(n) => n
+    Err(_) => panic()
+  }
+  assert_eq(n.find_pnml_transition("t_consume"), Some(0))
+  assert_eq(n.find_transition("消费"), Some(0))
+  assert_eq(n.find_transition("t_consume"), None)
 }

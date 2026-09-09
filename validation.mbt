@@ -78,3 +78,9 @@ test "validation catches corrupted internal fields in stable order" {
   assert_eq(n.find_transition("t"), Some(0))
   assert_eq(n.find_transition("missing"), None)
 }
+
+///|
+/// Resolve an original imported PNML ID, independently of display labels.
+pub fn PetriNet::find_pnml_transition(self : PetriNet, id : String) -> Int? {
+  self.pnml_transition_ids.get(id)
+}

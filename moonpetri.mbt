@@ -38,6 +38,7 @@ pub struct PetriNet {
   priv places : Array[String]
   priv initial : Array[Int]
   priv transitions : Array[Transition]
+  priv pnml_transition_ids : Map[String, Int]
 }
 
 ///|
@@ -52,7 +53,7 @@ pub struct ReachabilityResult {
 
 ///|
 pub fn PetriNet::new() -> PetriNet {
-  { places: [], initial: [], transitions: [] }
+  { places: [], initial: [], transitions: [], pnml_transition_ids: Map([]) }
 }
 
 ///|
