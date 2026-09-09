@@ -1,2 +1,8 @@
 <?xml version="1.0"?>
-<pnml><net id="deadlock"><place id="empty"><name><text>empty</text></name><initialMarking><text>0</text></initialMarking></place><transition id="needs-token"><name><text>needs-token</text></name></transition><arc id="a1" source="empty" target="needs-token"/></net></pnml>
+<pnml><net id="deadlock">
+  <place id="left"><name><text>左侧资源</text></name></place>
+  <place id="right"><name><text>右侧资源</text></name></place>
+  <transition id="t_left"/><transition id="t_right"/>
+  <arc id="a1" source="left" target="t_left"/><arc id="a2" source="t_left" target="right"/>
+  <arc id="a3" source="right" target="t_right"/><arc id="a4" source="t_right" target="left"/>
+</net></pnml>

@@ -1,2 +1,11 @@
 <?xml version="1.0"?>
-<pnml><net id="producer-consumer"><place id="buffer"><name><text>buffer</text></name><initialMarking><text>1</text></initialMarking></place><transition id="consume"><name><text>consume</text></name></transition><arc id="a1" source="buffer" target="consume"><inscription><text>1</text></inscription></arc></net></pnml>
+<pnml><net id="producer-consumer">
+  <place id="free"><name><text>空闲容量</text></name><initialMarking><text>2</text></initialMarking></place>
+  <place id="buffer"><name><text>缓冲区</text></name></place>
+  <transition id="t_produce"/>
+  <transition id="t_consume"/>
+  <arc id="a1" source="free" target="t_produce"/>
+  <arc id="a2" source="t_produce" target="buffer"/>
+  <arc id="a3" source="buffer" target="t_consume"/>
+  <arc id="a4" source="t_consume" target="free"/>
+</net></pnml>
