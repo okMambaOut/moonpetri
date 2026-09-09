@@ -39,4 +39,6 @@ before = interfaces()
 run('moon', 'info')
 if before != interfaces():
     raise SystemExit('Generated interfaces changed; review and commit them before retrying')
+run(sys.executable, '-m', 'unittest', 'discover', '-s', 'scripts', '-p', '*_test.py')
+run(sys.executable, 'scripts/package_check.py')
 print('Engineering gate passed' + (' (native runtime explicitly skipped)' if args.skip_native_runtime else ' on all four targets'))

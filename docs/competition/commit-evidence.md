@@ -31,4 +31,4 @@
 
 复核方式：`git show --stat SHA`、`git show SHA`；在工作树运行 `python scripts/readiness.py --skip-native-runtime`。完整 native 运行需要 C 编译器或 GitHub runner，不能用静态检查代替。
 
-当前公开仓库仍为旧历史；此表是本地已完成证据，尚不证明 20 项已公开上传。
+同名公开仓库已重建，表中 20 项历史均已推送，并通过公开 commit API 核验 author/committer 均关联 okMambaOut；参见 completion-audit.md。

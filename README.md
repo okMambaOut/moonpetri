@@ -128,6 +128,8 @@ python scripts/smoke.py
 moon run examples/api-demo
 # 完整自动检查（native 执行要求 C 编译器）：
 python scripts/readiness.py
+# 只打包并检查 ZIP 内容，不会发布：
+python scripts/package_check.py
 ```
 
 测试覆盖构造验证、溢出、加权 self-loop、序列失败位置、BFS 最短路径／截断、状态快照隔离、死锁证据、PNML 正反例与 roundtrip，以及多容量守恒穷举。CI 配置必须在 GitHub 真实运行后才能称为通过；本地 `moon check --target native` 通过不等于 native 测试通过。

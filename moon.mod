@@ -6,6 +6,8 @@ readme = "README.md"
 
 license = "MIT"
 
+repository = "https://github.com/okMambaOut/moonpetri"
+
 keywords = [ "petri-net", "reachability", "pnml", "model-checking", "moonbit" ]
 
 description = "Deterministic discrete Petri net modeling and reachability analysis for MoonBit"
