@@ -68,3 +68,14 @@ test "sequence applies in order" {
   let m = expect_ok(fire_sequence(n, n.initial_marking(), [t]))
   assert_eq(m.tokens[q], 1)
 }
+
+///|
+test "state cap result is deterministic" {
+  let n = PetriNet::new()
+  let p = expect_ok(n.add_place("p", 1))
+  let t = expect_ok(n.add_transition("loop"))
+  expect_ok(n.add_input(p, t, 1))
+  expect_ok(n.add_output(t, p, 1))
+  let r = expect_ok(reachable(n, n.initial_marking(), 1))
+  assert_false(r.truncated)
+}
