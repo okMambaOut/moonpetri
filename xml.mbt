@@ -60,6 +60,9 @@ fn XmlReader::name(self : XmlReader) -> String raise XmlError {
 
 ///|
 fn xml_decode(s : String) -> String raise XmlError {
+  if s.contains("]]>") {
+    raise XmlError("CDATA terminator is not text")
+  }
   let out : Array[String] = []
   let mut i = 0
   while i < s.length() {
@@ -189,13 +192,16 @@ fn xml_parse(input : String) -> XmlNode raise XmlError {
   }
   let r = { input, pos: 0 }
   r.space()
+  if r.starts("\u{FEFF}") {
+    r.pos += 1
+  }
   let declaration = "<?xml version=\"1.0\" encoding=\"UTF-8\"?>"
+  let short_declaration = "<?xml version=\"1.0\"?>"
   if r.starts(declaration) {
     r.pos += declaration.length()
     r.space()
-  }
-  if r.starts("<?xml version=\"1.0\"?>") {
-    r.pos += 21
+  } else if r.starts(short_declaration) {
+    r.pos += short_declaration.length()
     r.space()
   }
   let node = r.node(0)

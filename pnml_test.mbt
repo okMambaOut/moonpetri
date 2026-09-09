@@ -68,3 +68,29 @@ test "canonical PNML roundtrip preserves semantics and escapes names" {
   }
   assert_eq(empty.place_count(), 0)
 }
+
+///|
+test "PNML input limits and declaration policy are enforced" {
+  let body = "<pnml><net id='n'/></pnml>"
+  for
+    prefix in [
+      "", "<?xml version=\"1.0\"?>", "<?xml version=\"1.0\" encoding=\"UTF-8\"?>",
+      "\u{FEFF}",
+    ] {
+    assert_true(parse_pnml(prefix + body) is Ok(_))
+  }
+  assert_true(
+    parse_pnml("<?xml version=\"1.0\"?><?xml version=\"1.0\"?>" + body)
+    is Err(_),
+  )
+  assert_true(
+    parse_pnml(
+      "<pnml><net id='n'><place id='p'><name><text>bad]]></text></name></place></net></pnml>",
+    )
+    is Err(_),
+  )
+  let deep = Array::make(18, "<a>").join("") + Array::make(18, "</a>").join("")
+  assert_true(parse_pnml(deep) is Err(_))
+  let big = Array::make(2000001, "x").join("")
+  assert_true(parse_pnml(big) is Err(_))
+}
