@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<pnml><net id="producer-consumer"><place id="buffer"><name><text>buffer</text></name><initialMarking><text>1</text></initialMarking></place><transition id="consume"><name><text>consume</text></name></transition><arc id="a1" source="buffer" target="consume"><inscription><text>1</text></inscription></arc></net></pnml>

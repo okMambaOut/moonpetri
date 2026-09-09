@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<pnml><net id="deadlock"><place id="empty"><name><text>empty</text></name><initialMarking><text>0</text></initialMarking></place><transition id="needs-token"><name><text>needs-token</text></name></transition><arc id="a1" source="empty" target="needs-token"/></net></pnml>
