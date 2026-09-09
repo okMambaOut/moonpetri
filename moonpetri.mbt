@@ -43,7 +43,7 @@ pub struct PetriNet {
 ///|
 pub struct ReachabilityResult {
   states : Array[Marking]
-  traces : Array[Array[Int]]
+  predecessors : Array[(Int, Int)?]
   edges : Int
   truncated : Bool
   max_tokens : Int
@@ -272,18 +272,20 @@ pub fn reachable(
   if !valid(net, start) {
     return Err(InvalidMarking)
   }
-  let states = [start]
-  let traces : Array[Array[Int]] = [[]]
-  let q = [0]
+  let states = [marking(start.tokens)]
+  let predecessors : Array[(Int, Int)?] = [None]
   let seen : Map[String, Int] = Map([])
   seen[key(start)] = 0
   let mut head = 0
   let mut edges = 0
   let mut trunc = false
-  while head < q.length() {
-    let i = q[head]
+  while head < states.length() {
+    let i = head
     head = head + 1
     for t in enabled_transitions(net, states[i]) {
+      if edges == 2147483647 {
+        return Err(TokenOverflow)
+      }
       edges = edges + 1
       let n = match fire(net, states[i], t) {
         Ok(v) => v
@@ -295,10 +297,7 @@ pub fn reachable(
         } else {
           seen[key(n)] = states.length()
           states.push(n)
-          let tr = traces[i].copy()
-          tr.push(t)
-          traces.push(tr)
-          q.push(states.length() - 1)
+          predecessors.push(Some((i, t)))
         }
       }
     }
@@ -311,7 +310,7 @@ pub fn reachable(
       }
     }
   }
-  Ok({ states, traces, edges, truncated: trunc, max_tokens: mt })
+  Ok({ states, predecessors, edges, truncated: trunc, max_tokens: mt })
 }
 
 ///|
@@ -334,7 +333,13 @@ pub fn is_bounded(r : ReachabilityResult) -> Bool {
 pub fn shortest_trace(r : ReachabilityResult, target : Marking) -> Array[Int]? {
   for i in 0..<r.states.length() {
     if key(r.states[i]) == key(target) {
-      return Some(r.traces[i].copy())
+      let path : Array[Int] = []
+      let mut cursor = i
+      while r.predecessors[cursor] is Some((parent, transition)) {
+        path.push(transition)
+        cursor = parent
+      }
+      return Some(path.rev())
     }
   }
   None

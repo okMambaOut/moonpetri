@@ -150,3 +150,24 @@ test "sequence errors carry zero-based step and leave inputs untouched" {
   copy.tokens[p] = 9
   assert_eq(start.tokens[p], 1)
 }
+
+///|
+test "BFS stores shortest deterministic predecessors and enforces hard cap" {
+  let n = PetriNet::new()
+  let p = expect_ok(n.add_place("p", 0))
+  let grow = expect_ok(n.add_transition("grow"))
+  let fast = expect_ok(n.add_transition("fast"))
+  expect_ok(n.add_output(grow, p, 1))
+  expect_ok(n.add_output(fast, p, 2))
+  let start = n.initial_marking()
+  let r = expect_ok(reachable(n, start, 4))
+  assert_eq(r.states.length(), 4)
+  assert_true(r.truncated)
+  assert_false(is_bounded(r))
+  assert_eq(shortest_trace(r, marking([2])), Some([fast]))
+  assert_eq(shortest_trace(r, marking([3])), Some([grow, fast]))
+  assert_eq(shortest_trace(r, marking([99])), None)
+  start.tokens[p] = 77
+  assert_eq(r.states[0].tokens[p], 0)
+  assert_true(reachable(n, n.initial_marking(), 0) is Err(InvalidMaxStates))
+}
