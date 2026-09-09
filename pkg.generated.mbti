@@ -1,0 +1,119 @@
+// Generated using `moon info`, DON'T EDIT IT
+package "okMambaOut/moonpetri"
+
+import {
+  "moonbitlang/core/debug",
+}
+
+// Values
+pub fn analysis_report(PetriNet, ReachabilityResult) -> AnalysisReport
+
+pub fn boundedness(ReachabilityResult) -> Boundedness
+
+pub fn deadlock_traces(ReachabilityResult) -> Array[(Marking, Array[Int])]
+
+pub fn deadlocks(PetriNet, ReachabilityResult) -> Array[Marking]
+
+pub fn enabled(PetriNet, Marking, Int) -> Bool
+
+pub fn enabled_transitions(PetriNet, Marking) -> Array[Int]
+
+pub fn fire(PetriNet, Marking, Int) -> Result[Marking, PetriError]
+
+pub fn fire_sequence(PetriNet, Marking, Array[Int]) -> Result[Marking, PetriError]
+
+pub fn is_bounded(ReachabilityResult) -> Bool
+
+pub fn marking(Array[Int]) -> Marking
+
+pub fn marking_fingerprint(Marking) -> String
+
+pub fn observed_place_maxima(ReachabilityResult) -> Array[Int]
+
+pub fn parse_pnml(String) -> Result[PetriNet, Array[PetriError]]
+
+pub fn reachable(PetriNet, Marking, Int) -> Result[ReachabilityResult, PetriError]
+
+pub fn run_command(String, String, Array[String]) -> Result[String, Array[PetriError]]
+
+pub fn serialize_pnml(PetriNet) -> String
+
+pub fn shortest_trace(ReachabilityResult, Marking) -> Array[Int]?
+
+// Errors
+
+// Types and methods
+pub struct AnalysisReport {
+  states : Int
+  edges : Int
+  deadlocks : Int
+  truncated : Bool
+  max_tokens : Int
+}
+pub fn AnalysisReport::to_json(Self) -> String
+
+pub struct Arc {
+  place : Int
+  transition : Int
+  mut weight : Int
+}
+
+pub(all) enum Boundedness {
+  ProvenBounded
+  Unknown
+} derive(Eq, @debug.Debug)
+
+pub struct Marking {
+  // private fields
+} derive(Eq, @debug.Debug)
+pub fn Marking::token(Self, Int) -> Int?
+pub fn Marking::tokens(Self) -> Array[Int]
+
+pub(all) enum PetriError {
+  EmptyName
+  InvalidName
+  NegativeTokens
+  InvalidWeight
+  InvalidPlace
+  InvalidTransition
+  InvalidMarking
+  NotEnabled
+  InvalidMaxStates
+  DuplicateName(String)
+  TokenOverflow
+  SequenceFailed(Int, Int, PetriError)
+  ParseError(String)
+} derive(Eq, @debug.Debug)
+
+pub struct PetriNet {
+  // private fields
+}
+pub fn PetriNet::add_input(Self, Int, Int, Int) -> Result[Unit, PetriError]
+pub fn PetriNet::add_output(Self, Int, Int, Int) -> Result[Unit, PetriError]
+pub fn PetriNet::add_place(Self, String, Int) -> Result[Int, PetriError]
+pub fn PetriNet::add_transition(Self, String) -> Result[Int, PetriError]
+pub fn PetriNet::find_pnml_transition(Self, String) -> Int?
+pub fn PetriNet::find_transition(Self, String) -> Int?
+pub fn PetriNet::initial_marking(Self) -> Marking
+pub fn PetriNet::new() -> Self
+pub fn PetriNet::place_count(Self) -> Int
+pub fn PetriNet::place_name(Self, Int) -> String?
+pub fn PetriNet::transition_count(Self) -> Int
+pub fn PetriNet::transition_name(Self, Int) -> String?
+pub fn PetriNet::validate(Self) -> Result[Unit, Array[PetriError]]
+
+pub struct ReachabilityResult {
+  edges : Int
+  truncated : Bool
+  max_tokens : Int
+  // private fields
+}
+pub fn ReachabilityResult::state_count(Self) -> Int
+pub fn ReachabilityResult::states(Self) -> Array[Marking]
+
+type Transition
+
+// Type aliases
+
+// Traits
+

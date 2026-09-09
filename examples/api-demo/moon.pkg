@@ -1,0 +1,5 @@
+import {
+  "okMambaOut/moonpetri" @petri,
+}
+
+pkgtype(kind: "executable")
