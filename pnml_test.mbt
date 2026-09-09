@@ -36,3 +36,35 @@ test "PNML rejects unsupported or ambiguous models" {
     assert_true(parse_pnml(input) is Err(_))
   }
 }
+
+///|
+test "canonical PNML roundtrip preserves semantics and escapes names" {
+  let n = PetriNet::new()
+  let p = match n.add_place("缓冲<&\"'>", 3) {
+    Ok(x) => x
+    Err(_) => panic()
+  }
+  let t = match n.add_transition("消费&生产") {
+    Ok(x) => x
+    Err(_) => panic()
+  }
+  assert_true(n.add_input(p, t, 2) is Ok(_))
+  assert_true(n.add_output(t, p, 1) is Ok(_))
+  let text = serialize_pnml(n)
+  let copy = match parse_pnml(text) {
+    Ok(x) => x
+    Err(_) => panic()
+  }
+  assert_eq(serialize_pnml(copy), text)
+  assert_eq(copy.place_name(0), n.place_name(0))
+  assert_eq(copy.transition_name(0), n.transition_name(0))
+  assert_eq(
+    fire(copy, copy.initial_marking(), 0),
+    fire(n, n.initial_marking(), 0),
+  )
+  let empty = match parse_pnml(serialize_pnml(PetriNet::new())) {
+    Ok(x) => x
+    Err(_) => panic()
+  }
+  assert_eq(empty.place_count(), 0)
+}

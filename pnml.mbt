@@ -156,6 +156,46 @@ pub fn parse_pnml(input : String) -> Result[PetriNet, Array[PetriError]] {
 }
 
 ///|
-pub fn serialize_pnml(_net : PetriNet) -> String {
-  "<pnml><net id=\"moonpetri\"></net></pnml>"
+fn xml_escape(s : String) -> String {
+  s
+  .replace(old="&", new="&amp;")
+  .replace(old="<", new="&lt;")
+  .replace(old=">", new="&gt;")
+  .replace(old="\"", new="&quot;")
+  .replace(old="'", new="&apos;")
+}
+
+///|
+/// Emit canonical flat PNML with generated IDs and preserved model order.
+pub fn serialize_pnml(net : PetriNet) -> String {
+  let out = [
+    "<pnml><net id=\"moonpetri\" type=\"http://www.pnml.org/version-2009/grammar/ptnet\">",
+  ]
+  for p in 0..<net.places.length() {
+    out.push(
+      "<place id=\"p\{p}\"><name><text>\{xml_escape(net.places[p])}</text></name><initialMarking><text>\{net.initial[p]}</text></initialMarking></place>",
+    )
+  }
+  for t in 0..<net.transitions.length() {
+    out.push(
+      "<transition id=\"t\{t}\"><name><text>\{xml_escape(net.transitions[t].name)}</text></name></transition>",
+    )
+  }
+  let mut id = 0
+  for t in 0..<net.transitions.length() {
+    for a in net.transitions[t].inputs {
+      out.push(
+        "<arc id=\"a\{id}\" source=\"p\{a.place}\" target=\"t\{t}\"><inscription><text>\{a.weight}</text></inscription></arc>",
+      )
+      id += 1
+    }
+    for a in net.transitions[t].outputs {
+      out.push(
+        "<arc id=\"a\{id}\" source=\"t\{t}\" target=\"p\{a.place}\"><inscription><text>\{a.weight}</text></inscription></arc>",
+      )
+      id += 1
+    }
+  }
+  out.push("</net></pnml>")
+  out.join("\n")
 }
