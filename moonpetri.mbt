@@ -7,7 +7,7 @@ pub struct Arc {
 
 ///|
 pub struct Marking {
-  tokens : Array[Int]
+  priv tokens : Array[Int]
 } derive(Eq, Debug)
 
 ///|
@@ -35,15 +35,15 @@ struct Transition {
 
 ///|
 pub struct PetriNet {
-  places : Array[String]
-  initial : Array[Int]
-  transitions : Array[Transition]
+  priv places : Array[String]
+  priv initial : Array[Int]
+  priv transitions : Array[Transition]
 }
 
 ///|
 pub struct ReachabilityResult {
-  states : Array[Marking]
-  predecessors : Array[(Int, Int)?]
+  priv states : Array[Marking]
+  priv predecessors : Array[(Int, Int)?]
   edges : Int
   truncated : Bool
   max_tokens : Int
@@ -379,4 +379,30 @@ pub fn marking(tokens : Array[Int]) -> Marking {
 /// Return a stable textual fingerprint for diagnostics and snapshots.
 pub fn marking_fingerprint(m : Marking) -> String {
   m.tokens.map(fn(x) { x.to_string() }).join(",")
+}
+
+///|
+/// Return a defensive copy, never the marking's backing array.
+pub fn Marking::tokens(self : Marking) -> Array[Int] {
+  self.tokens.copy()
+}
+
+///|
+pub fn Marking::token(self : Marking, place : Int) -> Int? {
+  if place < 0 || place >= self.tokens.length() {
+    None
+  } else {
+    Some(self.tokens[place])
+  }
+}
+
+///|
+/// Return detached state snapshots in BFS order.
+pub fn ReachabilityResult::states(self : ReachabilityResult) -> Array[Marking] {
+  self.states.map(fn(m) { marking(m.tokens) })
+}
+
+///|
+pub fn ReachabilityResult::state_count(self : ReachabilityResult) -> Int {
+  self.states.length()
 }

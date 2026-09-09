@@ -15,8 +15,8 @@ test "firing consumes and produces tokens" {
   expect_ok(n.add_input(p, t, 1))
   expect_ok(n.add_output(t, q, 1))
   let m = expect_ok(fire(n, n.initial_marking(), t))
-  assert_eq(m.tokens[p], 0)
-  assert_eq(m.tokens[q], 1)
+  assert_eq(m.tokens()[p], 0)
+  assert_eq(m.tokens()[q], 1)
 }
 
 ///|
@@ -26,7 +26,7 @@ test "bounded reachability finds deadlock" {
   let t = expect_ok(n.add_transition("stop"))
   expect_ok(n.add_input(p, t, 1))
   let r = expect_ok(reachable(n, n.initial_marking(), 10))
-  assert_eq(r.states.length(), 2)
+  assert_eq(r.state_count(), 2)
   assert_eq(deadlocks(n, r).length(), 1)
 }
 
@@ -66,7 +66,7 @@ test "sequence applies in order" {
   expect_ok(n.add_input(p, t, 1))
   expect_ok(n.add_output(t, q, 1))
   let m = expect_ok(fire_sequence(n, n.initial_marking(), [t]))
-  assert_eq(m.tokens[q], 1)
+  assert_eq(m.tokens()[q], 1)
 }
 
 ///|
@@ -112,10 +112,10 @@ test "overflow is rejected without mutating arcs or marking" {
   let t = expect_ok(n.add_transition("t"))
   expect_ok(n.add_output(t, p, 1))
   assert_eq(fire(n, n.initial_marking(), t), Err(TokenOverflow))
-  assert_eq(n.initial_marking().tokens[p], 2147483647)
+  assert_eq(n.initial_marking().tokens()[p], 2147483647)
   expect_ok(n.add_input(p, t, 2147483647))
   assert_eq(n.add_input(p, t, 1), Err(TokenOverflow))
-  assert_eq(expect_ok(fire(n, n.initial_marking(), t)).tokens[p], 1)
+  assert_eq(expect_ok(fire(n, n.initial_marking(), t)).tokens()[p], 1)
 }
 
 ///|
@@ -144,11 +144,11 @@ test "sequence errors carry zero-based step and leave inputs untouched" {
     fire_sequence(n, start, [t, t]),
     Err(SequenceFailed(1, t, NotEnabled)),
   )
-  assert_eq(start.tokens[p], 1)
+  assert_eq(start.tokens()[p], 1)
   assert_eq(fire_sequence(n, marking([-1]), []), Err(InvalidMarking))
   let copy = expect_ok(fire_sequence(n, start, []))
-  copy.tokens[p] = 9
-  assert_eq(start.tokens[p], 1)
+  copy.tokens()[p] = 9
+  assert_eq(start.tokens()[p], 1)
 }
 
 ///|
@@ -161,13 +161,30 @@ test "BFS stores shortest deterministic predecessors and enforces hard cap" {
   expect_ok(n.add_output(fast, p, 2))
   let start = n.initial_marking()
   let r = expect_ok(reachable(n, start, 4))
-  assert_eq(r.states.length(), 4)
+  assert_eq(r.state_count(), 4)
   assert_true(r.truncated)
   assert_false(is_bounded(r))
   assert_eq(shortest_trace(r, marking([2])), Some([fast]))
   assert_eq(shortest_trace(r, marking([3])), Some([grow, fast]))
   assert_eq(shortest_trace(r, marking([99])), None)
-  start.tokens[p] = 77
-  assert_eq(r.states[0].tokens[p], 0)
+  start.tokens()[p] = 77
+  assert_eq(r.states()[0].tokens()[p], 0)
   assert_true(reachable(n, n.initial_marking(), 0) is Err(InvalidMaxStates))
+}
+
+///|
+test "public marking and reachability snapshots cannot corrupt analysis" {
+  let n = PetriNet::new()
+  let _ = expect_ok(n.add_place("p", 1))
+  let m = n.initial_marking()
+  let tokens = m.tokens()
+  tokens[0] = -100
+  assert_eq(m.token(0), Some(1))
+  assert_eq(m.token(-1), None)
+  assert_eq(m.token(1), None)
+  let r = expect_ok(reachable(n, m, 1))
+  let states = r.states()
+  states[0] = marking([99])
+  assert_eq(r.states()[0].token(0), Some(1))
+  assert_eq(shortest_trace(r, m), Some([]))
 }
