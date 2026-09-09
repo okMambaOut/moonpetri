@@ -22,7 +22,7 @@ moon test --target wasm-gc
 moon run examples/api-demo
 ```
 
-本地验证工具链为 `moon 0.1.20260713` / `moonc v0.10.4+2cc641edf`；CI 使用 `.moonbit-version` 固定相同编译器发行包，避免滚动版格式器规则变化造成不可复现。Linux／macOS 可将该文件中的版本作为官方安装脚本的参数。**尚未发布 MoonCakes**，因此这里不提供会失败的 `moon add okMambaOut/moonpetri` 安装承诺；目前从源码运行。比赛要求的包发布仍由参赛者单独完成。
+本地验证工具链为 `moon 0.1.20260713` / `moonc v0.10.4+2cc641edf`；CI 使用 `.moonbit-version` 固定相同编译器发行包，避免滚动版格式器规则变化造成不可复现。Linux／macOS 可将该文件中的版本作为官方安装脚本的参数。源码运行不依赖 MoonCakes 是否已发布。注册表版本可用后，可在消费工程执行 `moon add okMambaOut/moonpetri@0.1.0`；发布前不要把这条命令当作已安装成功的证据。发布流程和核验方式见 `docs/competition/publication.md`。
 
 ## 三个可复现的使用场景
 

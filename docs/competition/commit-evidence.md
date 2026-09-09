@@ -1,8 +1,8 @@
 # 有效提交证据（本地核验）
 
-核验日期：2026-09-09。此表列出 **20 个已存在、非空、可核验的实质提交**，不是把原始 commit 总数直接当作有效数。
+核验日期：2026-09-09。此表列出 **21 个已存在、非空、可核验的实质提交**，不是把原始 commit 总数直接当作有效数。
 
-身份重写不增加数量。历史中的格式提交、单项机械测试拆分、修复自身语法错误、错误 Action 引用、反复改署名等 21 个旧提交保留以便审计，但不计入下表。没有空提交，也没有人为回填开发日期。后续审计文档提交本身不用于凑这 20 项。
+身份重写不增加数量。历史中的格式提交、单项机械测试拆分、修复自身语法错误、错误 Action 引用、反复改署名等 21 个旧提交保留以便审计，但不计入下表。没有空提交，也没有人为回填开发日期。后续纯审计文档提交不计数；第 21 项为用户追加发布要求后产生的实际打包检查实现。
 
 证据层级：SHA 和 diff 证明对应变更实际存在；提交时新功能附带的测试已运行，完整最终回归见 local-verification.md。最早两项只作为真实初始实现／测试里程碑，不声称早期版本通过了今天的完整 gate。本表各里程碑的验证描述以本地证据为基础；随后通过的远程四目标 CI 见 completion-audit.md。
 
@@ -29,6 +29,8 @@
 | 19 | `7455d8c26e4c601ed15b3f17a17a68649a0aaff4` | ci: enforce nonzero tests build and real CLI acceptance across four targets | 修复不存在的 Action，加入全目标 check/build/test/CLI 和非零测试保护；本地除 native runtime 外通过，远程尚未运行。 |
 | 20 | `dab5793aa2ce86062af29f13e9b730c41aa6d056` | docs: refresh duplicate review with MoonBDD comparison and reproducible search evidence | 9 组 MoonCakes/4 组 GitHub 检索原始响应，补充 MoonBDD 相邻风险，纠正两个失效仓库地址。 |
 
+| 21 | `ead489b8b4b34bc70691e2b72db042cace012191` | feat: audit MoonCakes package contents and provenance before publication | 修复仓库元数据，新增真实 ZIP 内容／私密文件／路径安全审计和 7 项回归；本地及 GitHub CI 34371125273 通过。 |
+
 复核方式：`git show --stat SHA`、`git show SHA`；在工作树运行 `python scripts/readiness.py --skip-native-runtime`。完整 native 运行需要 C 编译器或 GitHub runner，不能用静态检查代替。
 
-同名公开仓库已重建，表中 20 项历史均已推送，并通过公开 commit API 核验 author/committer 均关联 okMambaOut；参见 completion-audit.md。
+同名公开仓库已重建，表中 21 项历史均已推送，并通过公开 commit API 核验 author/committer 均关联 okMambaOut；参见 completion-audit.md。

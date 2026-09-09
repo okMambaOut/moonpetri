@@ -14,4 +14,4 @@
 - 删除并重建同名公开仓库，公开提交身份与唯一贡献者 API 均核验为 okMambaOut。
 - CI 固定本地验证编译器，Ubuntu 四目标构建、测试和实际 CLI 验收通过；发布前对最终提交再次执行 CI。
 
-限制：未发布 MoonCakes；完整 PNML 和强类型跨网 ID 不在本版实现范围。
+限制：完整 PNML 和强类型跨网 ID 不在本版实现范围。GitHub Release 与 MoonCakes 是独立发布目标，不以其一存在推断另一项已发布。
