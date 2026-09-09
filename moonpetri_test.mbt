@@ -1,4 +1,10 @@
-fn[T] expect_ok(r : Result[T, PetriError]) -> T { match r { Ok(x) => x; Err(_) => panic() } }
+///|
+fn[T] expect_ok(r : Result[T, PetriError]) -> T {
+  match r {
+    Ok(x) => x
+    Err(_) => panic()
+  }
+}
 
 ///|
 test "firing consumes and produces tokens" {
@@ -13,6 +19,7 @@ test "firing consumes and produces tokens" {
   assert_eq(m.tokens[q], 1)
 }
 
+///|
 test "bounded reachability finds deadlock" {
   let n = PetriNet::new()
   let p = expect_ok(n.add_place("p", 1))
@@ -22,4 +29,3 @@ test "bounded reachability finds deadlock" {
   assert_eq(r.states.length(), 2)
   assert_eq(deadlocks(n, r).length(), 1)
 }
-
