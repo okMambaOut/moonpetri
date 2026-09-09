@@ -29,9 +29,21 @@ test "bounded reachability finds deadlock" {
   assert_eq(r.states.length(), 2)
   assert_eq(deadlocks(n, r).length(), 1)
 }
+
+///|
 test "invalid input is rejected" {
   let n = PetriNet::new()
   assert_true(n.add_place("", 0).is_err())
   assert_true(n.add_place("p", -1).is_err())
   assert_true(n.add_transition("").is_err())
+}
+
+///|
+test "duplicate arcs merge" {
+  let n = PetriNet::new()
+  let p = expect_ok(n.add_place("p", 2))
+  let t = expect_ok(n.add_transition("t"))
+  expect_ok(n.add_input(p, t, 1))
+  expect_ok(n.add_input(p, t, 1))
+  assert_true(enabled(n, n.initial_marking(), t))
 }
