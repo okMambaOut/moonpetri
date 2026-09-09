@@ -194,6 +194,10 @@ fn xml_parse(input : String) -> XmlNode raise XmlError {
     r.pos += declaration.length()
     r.space()
   }
+  if r.starts("<?xml version=\"1.0\"?>") {
+    r.pos += 21
+    r.space()
+  }
   let node = r.node(0)
   r.space()
   if r.pos != input.length() {
