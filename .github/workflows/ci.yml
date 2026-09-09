@@ -5,6 +5,7 @@ jobs:
     runs-on: ubuntu-latest
     steps:
       - uses: actions/checkout@v4
-      - uses: moonbitlang/setup-moonbit@main
+      - uses: moonbitlang/moonbit-action@main
       - run: moon check --target wasm-gc --deny-warn
       - run: moon test --target wasm-gc
+
