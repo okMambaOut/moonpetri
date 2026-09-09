@@ -99,3 +99,8 @@ test "analysis report summarizes exploration" {
   assert_eq(report.states, 2)
   assert_eq(report.deadlocks, 1)
 }
+
+///|
+test "marking fingerprint is stable" {
+  assert_eq(marking_fingerprint(marking([1, 0, 2])), "1,0,2")
+}
