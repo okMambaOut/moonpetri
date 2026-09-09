@@ -87,3 +87,15 @@ test "shortest trace starts empty" {
   let r = expect_ok(reachable(n, n.initial_marking(), 4))
   assert_eq(shortest_trace(r, n.initial_marking()).unwrap().length(), 0)
 }
+
+///|
+test "analysis report summarizes exploration" {
+  let n = PetriNet::new()
+  let p = expect_ok(n.add_place("p", 1))
+  let t = expect_ok(n.add_transition("stop"))
+  expect_ok(n.add_input(p, t, 1))
+  let r = expect_ok(reachable(n, n.initial_marking(), 4))
+  let report = analysis_report(n, r)
+  assert_eq(report.states, 2)
+  assert_eq(report.deadlocks, 1)
+}
