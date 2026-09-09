@@ -1,37 +1,48 @@
 # 完成度与身份审计
 
-核验日期：2026-09-09。结论：**本地主要实现和中文交付材料已修复；远程重建、公开身份归属复核、绿色 CI、Release 与正式申报尚未完成。**
+核验日期：2026-09-09。**仓库已按用户要求删除并重建；修正历史已公开，贡献者 API 仅返回 okMambaOut；四目标 CI 已通过。** 申报书仍缺本人联系方式，MoonCakes 未发布，不宣称赛事全部验收完成。
 
 ## 身份／Git
 
-- 实际 `gh api user`：`okMambaOut`，账户 ID `316556870`；CLI 当前激活账号一致。
-- 展示署名与本地 Git author/committer：`okmanba`；提交邮箱为该登录名的 GitHub noreply 地址。
-- 仓库：`okMambaOut/moonpetri`；`gh repo view` 核验公开、默认分支 `master`、当前权限 `ADMIN`。
-- 用户明确要求的原 AI 生成提交身份已在备份后纠正；所有保留的本地分支／标签可达提交 author/committer 均为该身份。旧本地备份引用已移除，Git bundle 留在仓库外，不会上传。
-- 本地有效里程碑为 20 项，见 commit-evidence.md；格式、机械拆分、反复署名等旧提交不计数。
-- **远程仍是旧提交 `15c286dfaaf202cb49030bd62f16cf1a73077839`**。不能宣称 GitHub Contributors 已只剩当前用户；必须在真正重建／推送后使用 commit API 检查 `author.login`、`committer.login` 和 contributors。
+- `gh api user`：`okMambaOut`，账户 ID `316556870`；当前 CLI 激活账号一致。
+- 展示署名及 Git author/committer：`okmanba <316556870+okMambaOut@users.noreply.github.com>`。
+- 仓库 `okMambaOut/moonpetri` 已重建为 public，默认分支 `master`，当前权限 `ADMIN`。
+- 逐页读取公开 commit API，已核验修正历史全部 author.login 和 committer.login 均映射到 `okMambaOut`；contributors API 仅有 `okMambaOut`。
+- 用户授权的旧 AI 生成提交身份修正已保留外部 Git bundle 备份；备份及申报书未上传。没有改动父目录仓库。
+- 有效提交证据表列出 20 个实质里程碑，不把所有原始历史都算作有效，也不把后续发布修复凑入该表。
 
-## 当前阻塞
+## CI 与发布证据
 
-GitHub CLI scope 为 `gist, read:org, repo, workflow`，缺少删除旧仓库所需的 `delete_repo`。已要求用户自行执行 `gh auth refresh -h github.com -s delete_repo` 完成浏览器授权。授权前没有删除仓库、没有未经说明改为 force-push，也没有把本地修复假装成远程完成。
+- 首次运行 https://github.com/okMambaOut/moonpetri/actions/runs/34369854301 失败：滚动编译器格式规则与本机验证版不同，未隐瞒或跳过检查。
+- 修复：`.moonbit-version` 固定 `0.10.4+2cc641edf`，官方安装脚本按该版本安装。
+- 已通过运行：https://github.com/okMambaOut/moonpetri/actions/runs/34370073300 ，代码提交 `d964436d74ab502b3d0dd8044875cfb799d506ff`。
+- CI 在 Ubuntu 真实执行 wasm-gc/wasm/js/native 的 check、build、各 28 项测试、各 13 项 CLI 调用和 API demo；接口再生成未造成工作区变化。
+- 本地 Windows native 缺 C 编译器的事实保留；native runtime 的成功证据来自上述 CI，不冒充本机执行。
+- runner 提示 checkout@v4/setup-python@v5 的 Node 20 运行时弃用，并强制使用 Node 24；本次运行成功，后续应评估 Action 升级。
+- 发布门禁：本审计文档提交也必须在 master 通过 CI，才将 `v0.1.0` 指向该提交并创建 Release；禁止推送旧本地标签。最终状态可用下述命令复核，本文不预测未运行检查的结果。
 
-账号此前已由用户确认；不需要再次猜测用户名。授权后应：再次核验账号和目标、保留备份、删除并重建同名公开仓库、只推送修正后的 master、等待 CI，通过后再创建新的 v0.1.0 标签／Release，最后核验 API 和公开页面。**现有本地/远程 v0.1.0 是旧标记，不是本次修复的 Release，不能直接 push --tags 当作发布。**
+```sh
+gh api repos/okMambaOut/moonpetri/contributors --jq '.[].login'
+gh api repos/okMambaOut/moonpetri/commits/master --jq '{sha: .sha, author: .author.login, committer: .committer.login}'
+gh run list --repo okMambaOut/moonpetri --branch master --limit 3
+gh release view v0.1.0 --repo okMambaOut/moonpetri
+```
 
 ## Skill 对照
 
 | 要求 | 证据／状态 |
 | --- | --- |
-| MoonBit 核心、真实领域功能 | 核心 .mbt 文件，受限 PNML、BFS、CLI；不再是占位 parser |
-| 中文 README、安装与三个完整使用场景 | README.md、examples/README.md、三个 PNML、API demo、scripts/smoke.py |
-| 检查／构建／测试／错误输入 | local-verification.md；三目标 runtime 实测，四目标静态检查；native runtime 待 CI |
-| 可追溯有效提交 | commit-evidence.md 的 20 个非空实质里程碑；身份纠正不计新提交 |
+| MoonBit 核心、领域功能 | 加权 firing、严格 PNML 子集、BFS、CLI，非占位 parser |
+| 中文 README 与三个完整场景 | README.md、examples/README.md、三个 PNML、API demo、scripts/smoke.py |
+| 检查／构建／测试／错误输入 | local-verification.md 与上述四目标绿色 CI |
+| 至少 20 个有效提交 | commit-evidence.md 的 20 个 SHA、非空变更及验证说明 |
 | MIT／第三方／AI／安全／贡献说明 | LICENSE、THIRD_PARTY.md、AI_USAGE.md、SECURITY.md、CONTRIBUTING.md |
-| 查重及官方助手流程 | duplicate-check.md、search-evidence.json；新增 MoonBDD 真实相邻关系；永久登记已追加为 in-progress |
-| GitHub public／owner／权限 | 已核验旧仓库；待修正历史推送后重新核验实际贡献者 |
-| 绿色 CI／GitHub Release | 未完成，不把 workflow 文件当作绿色 CI |
-| 申报书 | 仓库外已更新审查稿；联系方式缺失，严格检查应失败，不能作为最终申报件 |
-| MoonCakes 发布 | 未发布；按用户边界没有执行 |
+| 查重及官方助手流程 | duplicate-check.md、search-evidence.json；含 MoonBDD 的实际相邻能力对比 |
+| GitHub public／owner／实际贡献 | 重建后 API 核验，唯一贡献者 okMambaOut |
+| Release | 依上节发布门禁生成 v0.1.0；以公开 Release 和 tag 对应提交为准 |
+| 申报书 | 仓库外审查稿，联系方式缺失，严格检查不能通过，不是最终申报件 |
+| MoonCakes | 未发布，需参与者另行完成 |
 
-## 与原计划仍存在的差距
+## 明确边界
 
-ID 为网络内整数索引，不是防跨网混用的 PlaceId/TransitionId；没有独立 FireResult。PNML 仅平面白名单子集，不支持 page/namespace 等完整互操作语义。资源限制不是完整沙箱。以上均在 README 公开说明，因此本次不宣称原计划每一项都已无条件完成。
+ID 是网络内整数索引，不是防跨网混用的 PlaceId/TransitionId；没有独立 FireResult。PNML 仅平面白名单子集，不支持 page/namespace 等完整互操作语义；输入限制不是完整沙箱。这些均在中文 README 说明，不宣称原计划每一项都已完成。
