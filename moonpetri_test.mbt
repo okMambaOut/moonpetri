@@ -29,3 +29,9 @@ test "bounded reachability finds deadlock" {
   assert_eq(r.states.length(), 2)
   assert_eq(deadlocks(n, r).length(), 1)
 }
+test "invalid input is rejected" {
+  let n = PetriNet::new()
+  assert_true(n.add_place("", 0).is_err())
+  assert_true(n.add_place("p", -1).is_err())
+  assert_true(n.add_transition("").is_err())
+}
