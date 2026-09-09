@@ -22,6 +22,7 @@ pub(all) enum PetriError {
   InvalidMaxStates
   DuplicateName(String)
   TokenOverflow
+  SequenceFailed(Int, Int, PetriError)
   ParseError(String)
 } derive(Eq, Debug)
 
@@ -240,11 +241,15 @@ pub fn fire_sequence(
   m : Marking,
   seq : Array[Int],
 ) -> Result[Marking, PetriError] {
-  let mut x = m
-  for t in seq {
+  if !valid(net, m) {
+    return Err(InvalidMarking)
+  }
+  let mut x = marking(m.tokens)
+  for i in 0..<seq.length() {
+    let t = seq[i]
     match fire(net, x, t) {
       Ok(n) => x = n
-      Err(e) => return Err(e)
+      Err(e) => return Err(SequenceFailed(i, t, e))
     }
   }
   Ok(x)

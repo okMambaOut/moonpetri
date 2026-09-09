@@ -132,3 +132,21 @@ test "invalid marking and duplicate names are diagnosed" {
   assert_eq(n.add_output(99, 0, 1), Err(InvalidTransition))
   assert_eq(n.add_input(0, t, 0), Err(InvalidWeight))
 }
+
+///|
+test "sequence errors carry zero-based step and leave inputs untouched" {
+  let n = PetriNet::new()
+  let p = expect_ok(n.add_place("p", 1))
+  let t = expect_ok(n.add_transition("consume"))
+  expect_ok(n.add_input(p, t, 1))
+  let start = n.initial_marking()
+  assert_eq(
+    fire_sequence(n, start, [t, t]),
+    Err(SequenceFailed(1, t, NotEnabled)),
+  )
+  assert_eq(start.tokens[p], 1)
+  assert_eq(fire_sequence(n, marking([-1]), []), Err(InvalidMarking))
+  let copy = expect_ok(fire_sequence(n, start, []))
+  copy.tokens[p] = 9
+  assert_eq(start.tokens[p], 1)
+}
