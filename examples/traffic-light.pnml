@@ -1,0 +1,2 @@
+<?xml version="1.0"?>
+<pnml><net id="traffic-light"><place id="red"><name><text>红灯</text></name><initialMarking><text>1</text></initialMarking></place><place id="green"><name><text>绿灯</text></name><initialMarking><text>0</text></initialMarking></place><transition id="go"><name><text>切换绿灯</text></name></transition><transition id="stop"><name><text>切换红灯</text></name></transition><arc id="a1" source="red" target="go"/><arc id="a2" source="go" target="green"/><arc id="a3" source="green" target="stop"/><arc id="a4" source="stop" target="red"/></net></pnml>
