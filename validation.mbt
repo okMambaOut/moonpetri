@@ -1,4 +1,9 @@
 ///|
+fn valid_name(name : String) -> Bool {
+  name.code_units().all(fn(c) { c >= 32 && c != 65534 && c != 65535 })
+}
+
+///|
 /// Verify model invariants without modifying the net.
 pub fn PetriNet::validate(self : PetriNet) -> Result[Unit, Array[PetriError]] {
   let errors : Array[PetriError] = []
@@ -9,6 +14,9 @@ pub fn PetriNet::validate(self : PetriNet) -> Result[Unit, Array[PetriError]] {
   for name in self.places {
     if name.trim() == "" {
       errors.push(EmptyName)
+    }
+    if !valid_name(name) {
+      errors.push(InvalidName)
     }
     if names.contains(name) {
       errors.push(DuplicateName(name))
@@ -25,6 +33,9 @@ pub fn PetriNet::validate(self : PetriNet) -> Result[Unit, Array[PetriError]] {
     let transition = self.transitions[t]
     if transition.name.trim() == "" {
       errors.push(EmptyName)
+    }
+    if !valid_name(transition.name) {
+      errors.push(InvalidName)
     }
     if transitions.contains(transition.name) {
       errors.push(DuplicateName(transition.name))

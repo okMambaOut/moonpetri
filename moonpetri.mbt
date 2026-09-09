@@ -13,6 +13,7 @@ pub struct Marking {
 ///|
 pub(all) enum PetriError {
   EmptyName
+  InvalidName
   NegativeTokens
   InvalidWeight
   InvalidPlace
@@ -65,6 +66,9 @@ pub fn PetriNet::add_place(
   if name.trim() == "" {
     return Err(EmptyName)
   }
+  if !valid_name(name) {
+    return Err(InvalidName)
+  }
   if tokens < 0 {
     return Err(NegativeTokens)
   }
@@ -86,6 +90,9 @@ pub fn PetriNet::add_transition(
 ) -> Result[Int, PetriError] {
   if name.trim() == "" {
     return Err(EmptyName)
+  }
+  if !valid_name(name) {
+    return Err(InvalidName)
   }
   for t in self.transitions {
     if t.name == name {
