@@ -326,3 +326,27 @@ pub fn shortest_trace(r : ReachabilityResult, target : Marking) -> Array[Int]? {
   }
   None
 }
+
+///|
+/// Summarize a bounded exploration.
+pub struct AnalysisReport {
+  states : Int
+  edges : Int
+  deadlocks : Int
+  truncated : Bool
+  max_tokens : Int
+}
+
+///|
+pub fn analysis_report(
+  net : PetriNet,
+  r : ReachabilityResult,
+) -> AnalysisReport {
+  {
+    states: r.states.length(),
+    edges: r.edges,
+    deadlocks: deadlocks(net, r).length(),
+    truncated: r.truncated,
+    max_tokens: r.max_tokens,
+  }
+}
