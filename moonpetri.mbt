@@ -140,7 +140,7 @@ pub fn PetriNet::add_output(
 }
 
 ///|
-pub fn PetriNet::initial_marking(self : PetriNet) -> Marking {
+pub fn PetriNet::place_count(self : PetriNet) -> Int { self.places.length() }\n\npub fn PetriNet::transition_count(self : PetriNet) -> Int { self.transitions.length() }\n\npub fn PetriNet::place_name(self : PetriNet, id : Int) -> String? { if id < 0 || id >= self.places.length() { None } else { Some(self.places[id]) } }\n\npub fn PetriNet::transition_name(self : PetriNet, id : Int) -> String? { if id < 0 || id >= self.transitions.length() { None } else { Some(self.transitions[id].name) } }\n\npub fn PetriNet::initial_marking(self : PetriNet) -> Marking {
   { tokens: self.initial.copy() }
 }
 
