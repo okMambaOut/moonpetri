@@ -73,8 +73,9 @@ moon test --target wasm-gc
 
 ## 贡献
 
-贡献者：**Han-Wentao**。提交修改前请阅读 `CONTRIBUTING.md`，保持结果顺序确定，新增行为必须补充回归测试。
+贡献者：**okmanba**。提交修改前请阅读 `CONTRIBUTING.md`，保持结果顺序确定，新增行为必须补充回归测试。
 
 ## 许可证
 
 MIT，详见 `LICENSE`。
+
