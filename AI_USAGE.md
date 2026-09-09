@@ -1,1 +1,9 @@
-AI assistance was used for scaffolding and review; implementation and tests are maintained in this repository.
+# AI 使用说明
+
+本项目使用 AI 辅助设计、MoonBit 实现、测试、调试、文档及工程检查。参赛者／维护者署名为 **okmanba**，GitHub 登录名为 **okMambaOut**；AI 不作为 GitHub 贡献者署名，也不添加机器人 Co-authored-by。
+
+本轮审查发现并修复了此前 AI 输出中的错误：PNML 占位实现、不可执行的示例说明、不存在的 CI Action、缺失的 MIT 正文、错误的提交身份以及把原始提交数量等同于有效提交数量。测试或 CI 没有运行的部分，不得写成已通过。
+
+提交历史的身份纠正按用户明确要求进行，原始历史先保存在仓库外的本地 Git bundle 中。纠正作者元数据不会增加有效提交数量。不会把格式化、修复自身语法错误、单个机械测试拆分或反复改署名计入有效里程碑。
+
+测试、模型数据与代码由本项目编写；公开 API 文档只用于语法和依赖核验，没有复制相邻仓库实现。AI 生成内容不等于已经过生产级或安全关键系统认证。维护者仍需理解 token 消耗/产生语义、BFS 截断的限制、PNML 子集边界和许可证，并对最终申报内容负责。

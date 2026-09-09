@@ -1,1 +1,12 @@
-Run moon check --target wasm-gc --deny-warn and moon test --target wasm-gc.
+# 贡献指南
+
+当前维护者：**okmanba**（GitHub：**okMambaOut**）。
+
+1. 先说明领域问题及可复现输入；保持离散加权 P/T 网边界，不悄悄扩大为完整 XML、工作流引擎或时间网。
+2. 功能和对应回归测试作为一个可审查变更提交；禁止为了数量拆分单个机械操作。
+3. 执行 `python scripts/readiness.py`；native 构建/测试需要 C 编译器，缺失时应明确记录，并查看 CI 的 native 结果。
+4. 修改公开 API 后运行 `moon info`，审查接口差异；更新中文 README、示例、边界说明和变更日志。
+5. 不提交 `_build`、`.mooncakes`、认证文件、私人联系方式或参赛申报书。只设置当前仓库的 Git 身份，不更改其他项目。
+6. 不伪造他人的署名；提交邮箱必须关联你实际使用的 GitHub 账号。提交新贡献时按实际作者归属，现有仓库不能冒充他人参与。
+
+主库为 MIT；引入依赖或参考代码必须同步更新 THIRD_PARTY.md 并核实许可证。
