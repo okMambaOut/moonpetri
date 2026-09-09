@@ -350,3 +350,15 @@ pub fn analysis_report(
     max_tokens: r.max_tokens,
   }
 }
+
+///|
+/// Create a marking with explicit token values.
+pub fn marking(tokens : Array[Int]) -> Marking {
+  { tokens: tokens.copy() }
+}
+
+///|
+/// Return a stable textual fingerprint for diagnostics and snapshots.
+pub fn marking_fingerprint(m : Marking) -> String {
+  m.tokens.map(fn(x) { x.to_string() }).join(",")
+}
