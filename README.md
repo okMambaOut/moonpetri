@@ -1,0 +1,1 @@
+# MoonPetri`n`nDeterministic discrete Petri-net modeling and bounded reachability analysis in pure MoonBit.`n`nCore model, firing, sequence execution, bounded BFS, trace reconstruction, and deadlock analysis are implemented. PNML and CLI integration are staged.
