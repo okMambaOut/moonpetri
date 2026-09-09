@@ -11,7 +11,7 @@ pub struct Marking {
 } derive(Eq, Debug)
 
 ///|
-pub enum PetriError {
+pub(all) enum PetriError {
   EmptyName
   NegativeTokens
   InvalidWeight
@@ -20,6 +20,8 @@ pub enum PetriError {
   InvalidMarking
   NotEnabled
   InvalidMaxStates
+  DuplicateName(String)
+  TokenOverflow
   ParseError(String)
 } derive(Eq, Debug)
 
@@ -65,7 +67,7 @@ pub fn PetriNet::add_place(
   }
   for n in self.places {
     if n == name {
-      return Err(EmptyName)
+      return Err(DuplicateName(name))
     }
   }
   let i = self.places.length()
@@ -84,7 +86,7 @@ pub fn PetriNet::add_transition(
   }
   for t in self.transitions {
     if t.name == name {
-      return Err(EmptyName)
+      return Err(DuplicateName(name))
     }
   }
   let i = self.transitions.length()
@@ -99,6 +101,9 @@ fn add_arc(a : Array[Arc], x : Arc) -> Result[Unit, PetriError] {
   }
   for i in 0..<a.length() {
     if a[i].place == x.place && a[i].transition == x.transition {
+      if a[i].weight > 2147483647 - x.weight {
+        return Err(TokenOverflow)
+      }
       a[i].weight = a[i].weight + x.weight
       return Ok(())
     }
@@ -174,7 +179,7 @@ pub fn PetriNet::initial_marking(self : PetriNet) -> Marking {
 
 ///|
 fn valid(net : PetriNet, m : Marking) -> Bool {
-  m.tokens.length() == net.places.length()
+  m.tokens.length() == net.places.length() && m.tokens.all(fn(x) { x >= 0 })
 }
 
 ///|
@@ -221,6 +226,9 @@ pub fn fire(
     n[a.place] = n[a.place] - a.weight
   }
   for a in net.transitions[t].outputs {
+    if n[a.place] > 2147483647 - a.weight {
+      return Err(TokenOverflow)
+    }
     n[a.place] = n[a.place] + a.weight
   }
   Ok({ tokens: n })

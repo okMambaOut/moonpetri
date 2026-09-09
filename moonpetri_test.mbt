@@ -104,3 +104,31 @@ test "analysis report summarizes exploration" {
 test "marking fingerprint is stable" {
   assert_eq(marking_fingerprint(marking([1, 0, 2])), "1,0,2")
 }
+
+///|
+test "overflow is rejected without mutating arcs or marking" {
+  let n = PetriNet::new()
+  let p = expect_ok(n.add_place("p", 2147483647))
+  let t = expect_ok(n.add_transition("t"))
+  expect_ok(n.add_output(t, p, 1))
+  assert_eq(fire(n, n.initial_marking(), t), Err(TokenOverflow))
+  assert_eq(n.initial_marking().tokens[p], 2147483647)
+  expect_ok(n.add_input(p, t, 2147483647))
+  assert_eq(n.add_input(p, t, 1), Err(TokenOverflow))
+  assert_eq(expect_ok(fire(n, n.initial_marking(), t)).tokens[p], 1)
+}
+
+///|
+test "invalid marking and duplicate names are diagnosed" {
+  let n = PetriNet::new()
+  let _ = expect_ok(n.add_place("p", 0))
+  let t = expect_ok(n.add_transition("t"))
+  assert_eq(n.add_place("p", 1), Err(DuplicateName("p")))
+  assert_eq(n.add_transition("t"), Err(DuplicateName("t")))
+  assert_false(enabled(n, marking([-1]), t))
+  assert_eq(fire(n, marking([-1]), t), Err(InvalidMarking))
+  assert_eq(fire(n, marking([]), t), Err(InvalidMarking))
+  assert_eq(n.add_input(-1, t, 1), Err(InvalidPlace))
+  assert_eq(n.add_output(99, 0, 1), Err(InvalidTransition))
+  assert_eq(n.add_input(0, t, 0), Err(InvalidWeight))
+}
