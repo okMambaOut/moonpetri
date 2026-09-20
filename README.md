@@ -9,7 +9,7 @@ MoonPetri 是用 MoonBit 编写的离线加权 Petri 网分析库。它从 place
 需要 MoonBit 工具链。CLI 文件读取依赖 moonbitlang/x。
 
 ```text
-moon add okMambaOut/moonpetri@0.1.1
+moon add okMambaOut/moonpetri@0.1.3
 ```
 
 源码运行：
