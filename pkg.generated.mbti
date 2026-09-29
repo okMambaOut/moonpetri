@@ -62,10 +62,16 @@ pub(all) enum Boundedness {
   ProvenBounded
   Unknown
 } derive(Eq, @debug.Debug)
+pub fn Boundedness::equal(Self, Self) -> Bool
+pub fn Boundedness::not_equal(Self, Self) -> Bool
+pub fn Boundedness::to_repr(Self) -> @debug.Repr
 
 pub struct Marking {
   // private fields
 } derive(Eq, @debug.Debug)
+pub fn Marking::equal(Self, Self) -> Bool
+pub fn Marking::not_equal(Self, Self) -> Bool
+pub fn Marking::to_repr(Self) -> @debug.Repr
 pub fn Marking::token(Self, Int) -> Int?
 pub fn Marking::tokens(Self) -> Array[Int]
 
@@ -84,6 +90,9 @@ pub(all) enum PetriError {
   SequenceFailed(Int, Int, PetriError)
   ParseError(String)
 } derive(Eq, @debug.Debug)
+pub fn PetriError::equal(Self, Self) -> Bool
+pub fn PetriError::not_equal(Self, Self) -> Bool
+pub fn PetriError::to_repr(Self) -> @debug.Repr
 
 pub struct PetriNet {
   // private fields
@@ -116,4 +125,3 @@ type Transition
 // Type aliases
 
 // Traits
-

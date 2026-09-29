@@ -74,7 +74,10 @@ fn natural(s : String) -> Int raise XmlError {
 fn[T] pnml_result(r : Result[T, PetriError]) -> T raise XmlError {
   match r {
     Ok(x) => x
-    Err(e) => raise XmlError("model error: \{e.to_repr()}")
+    Err(e) =>
+      raise XmlError(
+        "model error: \{@moonbitlang/core/debug.Debug::to_repr(e)}",
+      )
   }
 }
 

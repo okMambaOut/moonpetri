@@ -114,7 +114,7 @@ fn XmlReader::node(self : XmlReader, depth : Int) -> XmlNode raise XmlError {
     self.space()
     if self.starts("/>") {
       self.pos += 2
-      return { name, attrs, children: [], text: "" }
+      return { name, attrs, children: [], text: "", }
     }
     if self.starts(">") {
       self.pos += 1
@@ -182,7 +182,7 @@ fn XmlReader::node(self : XmlReader, depth : Int) -> XmlNode raise XmlError {
       text.push(xml_decode(self.input[start:self.pos].to_owned()))
     }
   }
-  { name, attrs, children, text: text.join("") }
+  { name, attrs, children, text: text.join(""), }
 }
 
 ///|
@@ -190,7 +190,7 @@ fn xml_parse(input : String) -> XmlNode raise XmlError {
   if input.length() > 2000000 {
     raise XmlError("input size limit exceeded")
   }
-  let r = { input, pos: 0 }
+  let r = { input, pos: 0, }
   r.space()
   if r.starts("\u{FEFF}") {
     r.pos += 1

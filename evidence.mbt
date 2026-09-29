@@ -6,6 +6,12 @@ pub(all) enum Boundedness {
 } derive(Eq, Debug)
 
 ///|
+pub extend Boundedness with Eq::{equal, not_equal}
+
+///|
+pub extend Boundedness with @moonbitlang/core/debug.Debug::{to_repr}
+
+///|
 pub fn boundedness(result : ReachabilityResult) -> Boundedness {
   if result.truncated {
     Unknown

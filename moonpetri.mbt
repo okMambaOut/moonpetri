@@ -54,7 +54,7 @@ pub struct ReachabilityResult {
 
 ///|
 pub fn PetriNet::new() -> PetriNet {
-  { places: [], initial: [], transitions: [], pnml_transition_ids: Map([]) }
+  { places: [], initial: [], transitions: [], pnml_transition_ids: Map([]), }
 }
 
 ///|
@@ -100,7 +100,7 @@ pub fn PetriNet::add_transition(
     }
   }
   let i = self.transitions.length()
-  self.transitions.push({ name, inputs: [], outputs: [] })
+  self.transitions.push({ name, inputs: [], outputs: [], })
   Ok(i)
 }
 
@@ -135,7 +135,7 @@ pub fn PetriNet::add_input(
   if t < 0 || t >= self.transitions.length() {
     return Err(InvalidTransition)
   }
-  add_arc(self.transitions[t].inputs, { place: p, transition: t, weight: w })
+  add_arc(self.transitions[t].inputs, { place: p, transition: t, weight: w, })
 }
 
 ///|
@@ -151,7 +151,7 @@ pub fn PetriNet::add_output(
   if t < 0 || t >= self.transitions.length() {
     return Err(InvalidTransition)
   }
-  add_arc(self.transitions[t].outputs, { place: p, transition: t, weight: w })
+  add_arc(self.transitions[t].outputs, { place: p, transition: t, weight: w, })
 }
 
 ///|
@@ -184,7 +184,7 @@ pub fn PetriNet::transition_name(self : PetriNet, id : Int) -> String? {
 
 ///|
 pub fn PetriNet::initial_marking(self : PetriNet) -> Marking {
-  { tokens: self.initial.copy() }
+  { tokens: self.initial.copy(), }
 }
 
 ///|
@@ -241,7 +241,7 @@ pub fn fire(
     }
     n[a.place] = n[a.place] + a.weight
   }
-  Ok({ tokens: n })
+  Ok({ tokens: n, })
 }
 
 ///|
@@ -387,7 +387,7 @@ pub fn analysis_report(
 ///|
 /// Create a marking with explicit token values.
 pub fn marking(tokens : Array[Int]) -> Marking {
-  { tokens: tokens.copy() }
+  { tokens: tokens.copy(), }
 }
 
 ///|
@@ -421,3 +421,15 @@ pub fn ReachabilityResult::states(self : ReachabilityResult) -> Array[Marking] {
 pub fn ReachabilityResult::state_count(self : ReachabilityResult) -> Int {
   self.states.length()
 }
+
+///|
+pub extend Marking with Eq::{equal, not_equal}
+
+///|
+pub extend Marking with @moonbitlang/core/debug.Debug::{to_repr}
+
+///|
+pub extend PetriError with Eq::{equal, not_equal}
+
+///|
+pub extend PetriError with @moonbitlang/core/debug.Debug::{to_repr}

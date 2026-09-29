@@ -6,7 +6,7 @@ MoonPetri 是用 MoonBit 编写的离线加权 Petri 网分析库。它从 place
 
 ## 安装
 
-需要 MoonBit 工具链。CLI 文件读取依赖 moonbitlang/x。
+需要 MoonBit 工具链，项目锁定并验证 `moonc v0.10.14+7d59c7ec9` 及以上版本。CLI 文件读取依赖 moonbitlang/x。
 
 ```text
 moon add okMambaOut/moonpetri@0.1.3
@@ -62,3 +62,13 @@ moon run cmd/moonpetri -- report examples/deadlock.pnml
 ## 许可证
 
 MIT。维护者为 okmanba，GitHub 账号为 okMambaOut。
+
+## 验收检查
+
+仓库包含 GitHub Actions 持续集成，覆盖格式检查、四目标检查与构建、测试、CLI 场景和接口文件一致性。提交前可运行：
+
+```sh
+python scripts/readiness.py --skip-native-runtime
+```
+
+该参数只在没有系统 C 编译器的本地环境跳过 native 运行时；GitHub Actions 在 Ubuntu runner 上执行完整 native 检查。MoonCakes 发布由参与者按当前版本手动执行。
